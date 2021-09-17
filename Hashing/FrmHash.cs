@@ -28,9 +28,11 @@ namespace Hashing
         Sondagem sondagem;
         HashLinear tabelaLinear;
         HashDuplo tabelaDuplo;
+        HashQuadratica tabelaQuadratica;
 
         public FrmHash()
         {
+            tabelaQuadratica = new HashQuadratica(50);
             tabelaLinear = new HashLinear(7);
             InitializeComponent();
         }
@@ -94,12 +96,12 @@ namespace Hashing
 
                      case Sondagem.quadratica:
                          {
-                            if (!tabelaLinear.Inserir(umaNovaPessoa))
+                            if (!tabelaQuadratica.Inserir(umaNovaPessoa))
                                 MessageBox.Show("Chave repetida; inclusão não efetuada!");
                             else
                             {
-                                tabelaLinear.ExibirDados(dgvTabela);
-                                tabelaLinear.ExibirColisoes(lsbColisoes);
+                                tabelaQuadratica.ExibirDados(dgvTabela);
+                                tabelaQuadratica.ExibirColisoes(lsbColisoes);
                             }
                             break;
                          }

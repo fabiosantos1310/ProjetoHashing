@@ -55,6 +55,7 @@
     </Compile>
     <Compile Include="HashDuplo.cs" />
     <Compile Include="HashLinear.cs" />
+    <Compile Include="HashQuadratica.cs" />
     <Compile Include="Pessoa.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
