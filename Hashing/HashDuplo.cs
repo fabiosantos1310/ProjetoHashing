@@ -1,9 +1,9 @@
 ﻿using System;
+using System.IO;
 using System.Windows.Forms;
 
 class HashDuplo
 {
-    private int tamanho = 7; // para gerar mais colisões; o ideal é primo > 100
     private int qtd = 0;
     private string[] colisoes;
     private Pessoa[] dados;          // instancio o arraylist dados
@@ -11,7 +11,6 @@ class HashDuplo
 
     public HashDuplo(int tamanho)
     {
-        this.tamanho = tamanho;
         this.colisoes = new string[tamanho];
         dados = new Pessoa[tamanho];
     }
@@ -20,42 +19,19 @@ class HashDuplo
     {
         get
         {
-            if (posicao < 0 || posicao > this.Tamanho -1)
+            if (posicao < 0 || posicao > this.Tamanho - 1)
             {
                 throw new IndexOutOfRangeException("Posição inválida!");
             }
 
             return this.dados[posicao];
         }
-        
+
     }
 
     public int Tamanho
     {
-        get => tamanho;
-        set
-        {
-            if (value < 0)
-            {
-                throw new Exception("Tamanho inválido!");
-            }
-
-            tamanho = value;
-        }
-    }
-
-    public int Qtd
-    {
-        get => qtd;
-        set
-        {
-            if (value < 0)
-            {
-                throw new Exception("Tamanho inválido!");
-            }
-
-            qtd = value;
-        }
+        get => this.dados.Length;
     }
 
 
@@ -69,41 +45,10 @@ class HashDuplo
 
         if (ret < 0)
             ret += this.dados.Length;
-        else if(ret == 0)
+        else if (ret == 0)
             ret += this.dados.Length - 1;
 
         return (int)ret; // retorna o índice do vetor dados onde um registro será armazenado
-    }
-
-    public bool Inserir(Pessoa item)
-    {
-
-        int valorDeHash;
-
-
-        if (!Existe(item.Chave, out valorDeHash))
-        {      
-
-            this.colisoes = new string[tamanho];
-            int qtdColisao = 0;
-
-            while(qtdColisao < this.Tamanho)
-            {
-                if (this.dados[valorDeHash] == null)
-                {
-                    this.dados[valorDeHash] = item; 
-                    return true;
-                }
-                else
-                {                    
-                    colisoes[qtdColisao] = $"Colisao na {valorDeHash}° posição, entre {this.dados[valorDeHash].Chave.Trim()} e {item.Chave.Trim()} - Hash{valorDeHash} - {Hash(valorDeHash.ToString())}";
-                    valorDeHash = Hash(valorDeHash.ToString());
-                    //valorDeHash *= 2;
-                    qtdColisao++;
-                }
-            }            
-        }
-        return false; // já existe, não incluiu
     }
 
 
@@ -111,9 +56,9 @@ class HashDuplo
     {
         ondeDados = Hash(chaveProcurada);  // posição do vetor onde deveria estar a pessoa com essa chave
 
-        foreach(Pessoa pessoa in this.dados)
+        foreach (Pessoa pessoa in this.dados)
         {
-            if(pessoa != null)
+            if (pessoa != null)
                 if (pessoa.Chave.CompareTo(chaveProcurada) == 0)
                     return true;
         }
@@ -121,10 +66,57 @@ class HashDuplo
         return false;
     }
 
+
+    public bool Buscar(string chaveProcurada, out int ondeDados)
+    {
+        ondeDados = Hash(chaveProcurada);  // posição do vetor onde deveria estar a pessoa com essa chave
+
+        for (int pos = ondeDados; pos <= this.Tamanho - 1; pos = Hash(pos.ToString()))
+        {
+            if (this.dados[pos].Chave.CompareTo(chaveProcurada) == 0)
+            {
+                ondeDados = pos;        // não existe, portanto inclui
+                return true;            // informa que conseguiu incluir o novo item na tabela de hash
+            }
+        }
+
+        return false;
+    }
+
+    public bool Inserir(Pessoa item)
+    {
+
+        int valorDeHash;
+
+        if (!Existe(item.Chave, out valorDeHash))
+        {
+
+            this.colisoes = new string[this.dados.Length];
+            int qtdColisao = 0;
+
+            while (qtdColisao < this.Tamanho)
+            {
+                if (this.dados[valorDeHash] == null)
+                {
+                    this.dados[valorDeHash] = item;
+                    return true;
+                }
+                else
+                {
+                    colisoes[qtdColisao] = $"Colisao na {valorDeHash}° posição, entre {this.dados[valorDeHash].Nome.Trim()} e {item.Nome.Trim()} - Hash{valorDeHash} - {Hash(valorDeHash.ToString())}";
+                    valorDeHash = Hash(valorDeHash.ToString());
+                    //valorDeHash *= 2;
+                    qtdColisao++;
+                }
+            }
+        }
+        return false; // já existe, não incluiu
+    }
+
     public bool Alterar(Pessoa item)
     {
         int onde = 0;
-        if (!Existe(item.Chave, out onde))
+        if (!Buscar(item.Chave, out onde))
             return false;
 
         this.dados[onde].Nome = item.Nome;
@@ -133,11 +125,10 @@ class HashDuplo
     }
 
 
-
     public bool Remover(string chaveARemover)
     {
         int onde = 0;
-        if (!Existe(chaveARemover, out onde))
+        if (!Buscar(chaveARemover, out onde))
             return false;
 
 
@@ -169,6 +160,36 @@ class HashDuplo
             if (this.colisoes[i] != null)
                 lsb.Items.Add(this.colisoes[i]);
         }
+    }
+
+    public void LerDados(string nomeArquivo)
+    {
+        if (!File.Exists(nomeArquivo))
+        {
+            var novoArq = File.CreateText(nomeArquivo);
+            novoArq.Close();
+        }
+
+        var arquivo = new StreamReader(nomeArquivo);
+
+        while (!arquivo.EndOfStream)
+        {
+            var umaPessoa = new Pessoa(arquivo.ReadLine());
+            Inserir(umaPessoa);
+        }
+        arquivo.Close();
+    }
+
+    public void GravarDados(string nomeArquivo)
+    {
+        var arquivo = new StreamWriter(nomeArquivo);
+
+        foreach (Pessoa pessoa in dados)
+        {
+            if(pessoa != null)
+                arquivo.WriteLine(pessoa.FormatoDeArquivo());
+        }
+        arquivo.Close();
     }
 }
 

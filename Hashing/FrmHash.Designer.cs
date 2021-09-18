@@ -32,6 +32,9 @@ namespace Hashing
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmHash));
             this.dgvTabela = new System.Windows.Forms.DataGridView();
+            this.colunaIndice = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colunaChave = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colunaNome = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.txtNome = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.txtChave = new System.Windows.Forms.TextBox();
@@ -41,6 +44,7 @@ namespace Hashing
             this.btnNovo = new System.Windows.Forms.ToolStripButton();
             this.btnEditar = new System.Windows.Forms.ToolStripButton();
             this.btnExcluir = new System.Windows.Forms.ToolStripButton();
+            this.btnListar = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.btnSair = new System.Windows.Forms.ToolStripButton();
             this.imlBotoes = new System.Windows.Forms.ImageList(this.components);
@@ -49,9 +53,9 @@ namespace Hashing
             this.rbQuadratica = new System.Windows.Forms.RadioButton();
             this.rbLinear = new System.Windows.Forms.RadioButton();
             this.lsbColisoes = new System.Windows.Forms.ListBox();
-            this.colunaIndice = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colunaChave = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colunaNome = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dlgAbrir = new System.Windows.Forms.OpenFileDialog();
+            this.label3 = new System.Windows.Forms.Label();
+            this.btnLimpar = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTabela)).BeginInit();
             this.tsBotoes.SuspendLayout();
             this.gbHashing.SuspendLayout();
@@ -65,13 +69,33 @@ namespace Hashing
             this.colunaIndice,
             this.colunaChave,
             this.colunaNome});
-            this.dgvTabela.Location = new System.Drawing.Point(12, 125);
+            this.dgvTabela.Location = new System.Drawing.Point(12, 147);
             this.dgvTabela.Name = "dgvTabela";
             this.dgvTabela.RowHeadersWidth = 51;
             this.dgvTabela.RowTemplate.Height = 24;
             this.dgvTabela.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
             this.dgvTabela.Size = new System.Drawing.Size(310, 264);
             this.dgvTabela.TabIndex = 19;
+            // 
+            // colunaIndice
+            // 
+            this.colunaIndice.Frozen = true;
+            this.colunaIndice.HeaderText = "ID";
+            this.colunaIndice.MinimumWidth = 6;
+            this.colunaIndice.Name = "colunaIndice";
+            this.colunaIndice.Width = 43;
+            // 
+            // colunaChave
+            // 
+            this.colunaChave.HeaderText = "Chave";
+            this.colunaChave.Name = "colunaChave";
+            this.colunaChave.Width = 63;
+            // 
+            // colunaNome
+            // 
+            this.colunaNome.HeaderText = "Nome";
+            this.colunaNome.Name = "colunaNome";
+            this.colunaNome.Width = 60;
             // 
             // txtNome
             // 
@@ -119,6 +143,7 @@ namespace Hashing
             this.btnNovo,
             this.btnEditar,
             this.btnExcluir,
+            this.btnListar,
             this.toolStripSeparator4,
             this.btnSair});
             this.tsBotoes.Location = new System.Drawing.Point(0, 0);
@@ -173,7 +198,19 @@ namespace Hashing
             this.btnExcluir.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.btnExcluir.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.btnExcluir.ToolTipText = "Exclui o registro apresentado na tela";
-            this.btnExcluir.Click += new System.EventHandler(this.btnExcluir_Click_1);
+            this.btnExcluir.Click += new System.EventHandler(this.btnExcluir_Click);
+            // 
+            // btnListar
+            // 
+            this.btnListar.Image = ((System.Drawing.Image)(resources.GetObject("btnListar.Image")));
+            this.btnListar.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnListar.Name = "btnListar";
+            this.btnListar.Size = new System.Drawing.Size(39, 39);
+            this.btnListar.Text = "&Listar";
+            this.btnListar.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.btnListar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.btnListar.ToolTipText = "Exclui o registro apresentado na tela";
+            this.btnListar.Click += new System.EventHandler(this.btnListar_Click);
             // 
             // toolStripSeparator4
             // 
@@ -200,9 +237,9 @@ namespace Hashing
             this.imlBotoes.Images.SetKeyName(1, "Add.bmp");
             this.imlBotoes.Images.SetKeyName(2, "COPY.BMP");
             this.imlBotoes.Images.SetKeyName(3, "Minus.bmp");
-            this.imlBotoes.Images.SetKeyName(4, "CLOSE1.BMP");
-            this.imlBotoes.Images.SetKeyName(5, "about.bmp");
-            this.imlBotoes.Images.SetKeyName(6, "PRINTER5.BMP");
+            this.imlBotoes.Images.SetKeyName(4, "PRINTER5.BMP");
+            this.imlBotoes.Images.SetKeyName(5, "CLOSE1.BMP");
+            this.imlBotoes.Images.SetKeyName(6, "about.bmp");
             this.imlBotoes.Images.SetKeyName(7, "REDO.BMP");
             this.imlBotoes.Images.SetKeyName(8, "WINNEXT.BMP");
             this.imlBotoes.Images.SetKeyName(9, "WINPREV.BMP");
@@ -213,7 +250,7 @@ namespace Hashing
             this.gbHashing.Controls.Add(this.rbDuplo);
             this.gbHashing.Controls.Add(this.rbQuadratica);
             this.gbHashing.Controls.Add(this.rbLinear);
-            this.gbHashing.Location = new System.Drawing.Point(322, 62);
+            this.gbHashing.Location = new System.Drawing.Point(346, 62);
             this.gbHashing.Name = "gbHashing";
             this.gbHashing.Size = new System.Drawing.Size(211, 46);
             this.gbHashing.TabIndex = 21;
@@ -260,37 +297,43 @@ namespace Hashing
             // 
             this.lsbColisoes.Enabled = false;
             this.lsbColisoes.FormattingEnabled = true;
-            this.lsbColisoes.Location = new System.Drawing.Point(328, 125);
+            this.lsbColisoes.Location = new System.Drawing.Point(328, 147);
             this.lsbColisoes.Name = "lsbColisoes";
             this.lsbColisoes.ScrollAlwaysVisible = true;
             this.lsbColisoes.Size = new System.Drawing.Size(339, 264);
             this.lsbColisoes.TabIndex = 22;
             // 
-            // colunaIndice
+            // dlgAbrir
             // 
-            this.colunaIndice.Frozen = true;
-            this.colunaIndice.HeaderText = "ID";
-            this.colunaIndice.MinimumWidth = 6;
-            this.colunaIndice.Name = "colunaIndice";
-            this.colunaIndice.Width = 43;
+            this.dlgAbrir.FileName = "openFileDialog1";
             // 
-            // colunaChave
+            // label3
             // 
-            this.colunaChave.HeaderText = "Chave";
-            this.colunaChave.Name = "colunaChave";
-            this.colunaChave.Width = 63;
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(325, 121);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(65, 17);
+            this.label3.TabIndex = 23;
+            this.label3.Text = "Colisões:";
             // 
-            // colunaNome
+            // btnLimpar
             // 
-            this.colunaNome.HeaderText = "Nome";
-            this.colunaNome.Name = "colunaNome";
-            this.colunaNome.Width = 60;
+            this.btnLimpar.Location = new System.Drawing.Point(592, 121);
+            this.btnLimpar.Name = "btnLimpar";
+            this.btnLimpar.Size = new System.Drawing.Size(75, 23);
+            this.btnLimpar.TabIndex = 24;
+            this.btnLimpar.Text = "Limpar";
+            this.btnLimpar.UseVisualStyleBackColor = true;
+            this.btnLimpar.Click += new System.EventHandler(this.btnLimpar_Click);
             // 
             // FrmHash
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(679, 423);
+            this.Controls.Add(this.btnLimpar);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.lsbColisoes);
             this.Controls.Add(this.gbHashing);
             this.Controls.Add(this.tsBotoes);
@@ -301,6 +344,7 @@ namespace Hashing
             this.Controls.Add(this.label1);
             this.Name = "FrmHash";
             this.Text = "Tipos de sondagem para HashCode";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmHash_FormClosing);
             this.Load += new System.EventHandler(this.FrmHashLinear_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgvTabela)).EndInit();
             this.tsBotoes.ResumeLayout(false);
@@ -323,7 +367,7 @@ namespace Hashing
         private System.Windows.Forms.ToolStripButton btnBuscar;
         private System.Windows.Forms.ToolStripButton btnNovo;
         private System.Windows.Forms.ToolStripButton btnEditar;
-        private System.Windows.Forms.ToolStripButton btnExcluir;
+        private System.Windows.Forms.ToolStripButton btnListar;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripButton btnSair;
         private System.Windows.Forms.ImageList imlBotoes;
@@ -335,5 +379,9 @@ namespace Hashing
         private System.Windows.Forms.DataGridViewTextBoxColumn colunaIndice;
         private System.Windows.Forms.DataGridViewTextBoxColumn colunaChave;
         private System.Windows.Forms.DataGridViewTextBoxColumn colunaNome;
+        private System.Windows.Forms.OpenFileDialog dlgAbrir;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button btnLimpar;
+        private System.Windows.Forms.ToolStripButton btnExcluir;
     }
 }

@@ -21,17 +21,17 @@ class Pessoa
         Nome = linhaLida.Substring(15);
     }
 
-    public string Chave 
-    { 
-        get => chave; 
-        set => chave = value.ToUpper().PadRight(15,' ').Substring(0,15); 
+    public string Chave
+    {
+        get => chave;
+        set => chave = value.ToUpper().PadRight(15, ' ').Substring(0, 15);
     }
 
 
-    public string Nome 
-    { 
-        get => nome; 
-        set => nome = value.PadRight(30, ' ').Substring(0, 30); 
+    public string Nome
+    {
+        get => nome;
+        set => nome = value.PadRight(30, ' ').Substring(0, 30);
     }
 
     public override string ToString()
@@ -39,7 +39,7 @@ class Pessoa
         return Chave.Trim() + " " + Nome.Trim();
     }
 
-    public string ParaArquivo()
+    public string FormatoDeArquivo()
     {
         return Chave + Nome;
     }

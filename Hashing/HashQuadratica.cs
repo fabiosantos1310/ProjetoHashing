@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows.Forms;
 
 namespace Hashing
@@ -99,7 +100,7 @@ namespace Hashing
                     }
                     else
                     {
-                        colisoes[i] = $"Colisao na {pos}° posição, entre {this.dados[pos].Chave.Trim()} e {item.Chave.Trim()} - Hash{valorDeHash}";
+                        colisoes[i] = $"Colisao na {pos}° posição, entre {this.dados[pos].Nome.Trim()} e {item.Nome.Trim()} - Hash{valorDeHash}";
                         i++;
                     }
                     pos++;
@@ -172,6 +173,37 @@ namespace Hashing
                 if (this.colisoes[i] != null)
                     lsb.Items.Add(this.colisoes[i]);
             }
+        }
+
+        public void LerDados(string nomeArquivo)
+        {
+            if (!File.Exists(nomeArquivo))
+            {
+                var novoArq = File.CreateText(nomeArquivo);
+                novoArq.Close();
+            }
+
+            var arquivo = new StreamReader(nomeArquivo);
+
+            while (!arquivo.EndOfStream)
+            {
+                var umaPessoa = new Pessoa(arquivo.ReadLine());
+                Inserir(umaPessoa);
+            }
+            arquivo.Close();
+        }
+
+        public void GravarDados(string nomeArquivo)
+        {
+            var arquivo = new StreamWriter(nomeArquivo);
+
+            foreach (Pessoa pessoa in dados)
+            {
+                if (pessoa != null)
+                    arquivo.WriteLine(pessoa.FormatoDeArquivo());
+            }
+
+            arquivo.Close();
         }
     }
 }

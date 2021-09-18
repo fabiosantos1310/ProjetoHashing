@@ -97,7 +97,7 @@ namespace apBucketHash
       for (int numeroLinha = 0; numeroLinha < Tamanho; numeroLinha++)
       {
         foreach (Pessoa umaPessoa in dados[numeroLinha])
-          arquivo.WriteLine(umaPessoa.ParaArquivo());
+          arquivo.WriteLine(umaPessoa.FormatoDeArquivo());
       }
       arquivo.Close();
     }
