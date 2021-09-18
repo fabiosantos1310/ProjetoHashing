@@ -86,7 +86,9 @@ namespace Hashing
 
                 if (this.dados.Length == this.qtd)
                     this.redimensioneSe(2 * this.dados.Length);
+
                 int pos = valorDeHash;
+
                 while (pos <= this.dados.Length - 1)
                 {
                     if (this.dados[pos] == null)
@@ -170,9 +172,6 @@ namespace Hashing
                 if (this.colisoes[i] != null)
                     lsb.Items.Add(this.colisoes[i]);
             }
-
-            lsb.Items.Add("--------------------------------------------------------");
-
         }
     }
 }

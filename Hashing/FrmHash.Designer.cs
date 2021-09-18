@@ -32,9 +32,6 @@ namespace Hashing
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmHash));
             this.dgvTabela = new System.Windows.Forms.DataGridView();
-            this.colunaIndice = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colunaChave = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colunaNome = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.txtNome = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.txtChave = new System.Windows.Forms.TextBox();
@@ -52,6 +49,9 @@ namespace Hashing
             this.rbQuadratica = new System.Windows.Forms.RadioButton();
             this.rbLinear = new System.Windows.Forms.RadioButton();
             this.lsbColisoes = new System.Windows.Forms.ListBox();
+            this.colunaIndice = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colunaChave = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colunaNome = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTabela)).BeginInit();
             this.tsBotoes.SuspendLayout();
             this.gbHashing.SuspendLayout();
@@ -59,9 +59,6 @@ namespace Hashing
             // 
             // dgvTabela
             // 
-            this.dgvTabela.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvTabela.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
             this.dgvTabela.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvTabela.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -72,36 +69,16 @@ namespace Hashing
             this.dgvTabela.Name = "dgvTabela";
             this.dgvTabela.RowHeadersWidth = 51;
             this.dgvTabela.RowTemplate.Height = 24;
-            this.dgvTabela.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.dgvTabela.Size = new System.Drawing.Size(237, 264);
+            this.dgvTabela.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
+            this.dgvTabela.Size = new System.Drawing.Size(310, 264);
             this.dgvTabela.TabIndex = 19;
-            // 
-            // colunaIndice
-            // 
-            this.colunaIndice.Frozen = true;
-            this.colunaIndice.HeaderText = "Índice";
-            this.colunaIndice.MinimumWidth = 6;
-            this.colunaIndice.Name = "colunaIndice";
-            this.colunaIndice.ReadOnly = true;
-            this.colunaIndice.Width = 61;
-            // 
-            // colunaChave
-            // 
-            this.colunaChave.HeaderText = "Chave";
-            this.colunaChave.Name = "colunaChave";
-            this.colunaChave.Width = 63;
-            // 
-            // colunaNome
-            // 
-            this.colunaNome.HeaderText = "Nome";
-            this.colunaNome.Name = "colunaNome";
-            this.colunaNome.Width = 60;
             // 
             // txtNome
             // 
             this.txtNome.Location = new System.Drawing.Point(69, 88);
+            this.txtNome.MaxLength = 15;
             this.txtNome.Name = "txtNome";
-            this.txtNome.Size = new System.Drawing.Size(180, 20);
+            this.txtNome.Size = new System.Drawing.Size(241, 20);
             this.txtNome.TabIndex = 13;
             // 
             // label2
@@ -117,8 +94,9 @@ namespace Hashing
             // txtChave
             // 
             this.txtChave.Location = new System.Drawing.Point(69, 62);
+            this.txtChave.MaxLength = 15;
             this.txtChave.Name = "txtChave";
-            this.txtChave.Size = new System.Drawing.Size(180, 20);
+            this.txtChave.Size = new System.Drawing.Size(241, 20);
             this.txtChave.TabIndex = 11;
             // 
             // label1
@@ -145,7 +123,7 @@ namespace Hashing
             this.btnSair});
             this.tsBotoes.Location = new System.Drawing.Point(0, 0);
             this.tsBotoes.Name = "tsBotoes";
-            this.tsBotoes.Size = new System.Drawing.Size(574, 42);
+            this.tsBotoes.Size = new System.Drawing.Size(679, 42);
             this.tsBotoes.TabIndex = 20;
             this.tsBotoes.Text = "toolStrip1";
             // 
@@ -159,6 +137,7 @@ namespace Hashing
             this.btnBuscar.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.btnBuscar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.btnBuscar.ToolTipText = "Busca registro pelo código";
+            this.btnBuscar.Click += new System.EventHandler(this.btnBuscar_Click);
             // 
             // btnNovo
             // 
@@ -182,6 +161,7 @@ namespace Hashing
             this.btnEditar.Text = "&Editar";
             this.btnEditar.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.btnEditar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.btnEditar.Click += new System.EventHandler(this.btnEditar_Click);
             // 
             // btnExcluir
             // 
@@ -193,6 +173,7 @@ namespace Hashing
             this.btnExcluir.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.btnExcluir.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.btnExcluir.ToolTipText = "Exclui o registro apresentado na tela";
+            this.btnExcluir.Click += new System.EventHandler(this.btnExcluir_Click_1);
             // 
             // toolStripSeparator4
             // 
@@ -232,9 +213,9 @@ namespace Hashing
             this.gbHashing.Controls.Add(this.rbDuplo);
             this.gbHashing.Controls.Add(this.rbQuadratica);
             this.gbHashing.Controls.Add(this.rbLinear);
-            this.gbHashing.Location = new System.Drawing.Point(276, 62);
+            this.gbHashing.Location = new System.Drawing.Point(322, 62);
             this.gbHashing.Name = "gbHashing";
-            this.gbHashing.Size = new System.Drawing.Size(211, 38);
+            this.gbHashing.Size = new System.Drawing.Size(211, 46);
             this.gbHashing.TabIndex = 21;
             this.gbHashing.TabStop = false;
             this.gbHashing.Text = "Opções de Hashing:";
@@ -277,18 +258,39 @@ namespace Hashing
             // 
             // lsbColisoes
             // 
+            this.lsbColisoes.Enabled = false;
             this.lsbColisoes.FormattingEnabled = true;
-            this.lsbColisoes.Location = new System.Drawing.Point(276, 125);
+            this.lsbColisoes.Location = new System.Drawing.Point(328, 125);
             this.lsbColisoes.Name = "lsbColisoes";
             this.lsbColisoes.ScrollAlwaysVisible = true;
-            this.lsbColisoes.Size = new System.Drawing.Size(286, 264);
+            this.lsbColisoes.Size = new System.Drawing.Size(339, 264);
             this.lsbColisoes.TabIndex = 22;
+            // 
+            // colunaIndice
+            // 
+            this.colunaIndice.Frozen = true;
+            this.colunaIndice.HeaderText = "ID";
+            this.colunaIndice.MinimumWidth = 6;
+            this.colunaIndice.Name = "colunaIndice";
+            this.colunaIndice.Width = 43;
+            // 
+            // colunaChave
+            // 
+            this.colunaChave.HeaderText = "Chave";
+            this.colunaChave.Name = "colunaChave";
+            this.colunaChave.Width = 63;
+            // 
+            // colunaNome
+            // 
+            this.colunaNome.HeaderText = "Nome";
+            this.colunaNome.Name = "colunaNome";
+            this.colunaNome.Width = 60;
             // 
             // FrmHash
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(574, 450);
+            this.ClientSize = new System.Drawing.Size(679, 423);
             this.Controls.Add(this.lsbColisoes);
             this.Controls.Add(this.gbHashing);
             this.Controls.Add(this.tsBotoes);
@@ -325,13 +327,13 @@ namespace Hashing
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripButton btnSair;
         private System.Windows.Forms.ImageList imlBotoes;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colunaIndice;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colunaChave;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colunaNome;
         private System.Windows.Forms.GroupBox gbHashing;
         private System.Windows.Forms.RadioButton rbDuplo;
         private System.Windows.Forms.RadioButton rbQuadratica;
         private System.Windows.Forms.RadioButton rbLinear;
         private System.Windows.Forms.ListBox lsbColisoes;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colunaIndice;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colunaChave;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colunaNome;
     }
 }

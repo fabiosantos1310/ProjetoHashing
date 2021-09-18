@@ -6,7 +6,7 @@ class HashDuplo
     private int tamanho = 7; // para gerar mais colisões; o ideal é primo > 100
     private int qtd = 0;
     private string[] colisoes;
-    Pessoa[] dados;          // instancio o arraylist dados
+    private Pessoa[] dados;          // instancio o arraylist dados
 
 
     public HashDuplo(int tamanho)
@@ -43,6 +43,7 @@ class HashDuplo
             tamanho = value;
         }
     }
+
     public int Qtd
     {
         get => qtd;
@@ -57,6 +58,7 @@ class HashDuplo
         }
     }
 
+
     public int Hash(string chave)
     {
         long ret = 0;
@@ -67,6 +69,8 @@ class HashDuplo
 
         if (ret < 0)
             ret += this.dados.Length;
+        else if(ret == 0)
+            ret += this.dados.Length - 1;
 
         return (int)ret; // retorna o índice do vetor dados onde um registro será armazenado
     }
@@ -75,60 +79,31 @@ class HashDuplo
     {
 
         int valorDeHash;
-        int i = 0;
 
-        
 
         if (!Existe(item.Chave, out valorDeHash))
-        {
+        {      
 
-            if (this.dados.Length == this.qtd)
-                        this.redimensioneSe(2 * this.dados.Length);
+            this.colisoes = new string[tamanho];
+            int qtdColisao = 0;
 
-            for (int pos = valorDeHash; pos <= this.dados.Length -1; pos++)
+            while(qtdColisao < this.Tamanho)
             {
-                if(this.dados[pos] == null)
+                if (this.dados[valorDeHash] == null)
                 {
-                    this.dados[pos] = item;      // não existe, portanto inclui
-                    qtd++;
-                    return true;            // informa que conseguiu incluir o novo item na tabela de hash
+                    this.dados[valorDeHash] = item; 
+                    return true;
                 }
                 else
-                { 
-                    colisoes[i] = $"Colisao na {pos}° posição, entre {this.dados[pos].Chave.Trim()} e {item.Chave.Trim()} - Hash{valorDeHash}";
-                    i++;
+                {                    
+                    colisoes[qtdColisao] = $"Colisao na {valorDeHash}° posição, entre {this.dados[valorDeHash].Chave.Trim()} e {item.Chave.Trim()} - Hash{valorDeHash} - {Hash(valorDeHash.ToString())}";
+                    valorDeHash = Hash(valorDeHash.ToString());
+                    //valorDeHash *= 2;
+                    qtdColisao++;
                 }
-
-            }
-
-            for(int pos = 0; pos < valorDeHash; pos++)
-            {
-                if (this.dados[pos] == null)
-                {
-                    this.dados[pos] = item;      // não existe, portanto inclui
-                    qtd++;
-                    return true;            // informa que conseguiu incluir o novo item na tabela de hash
-                }
-                else
-                {
-                    colisoes[i] = $"Colisao na {pos}° posição, entre {this.dados[pos].Chave.Trim()} e {item.Chave.Trim()} - Hash{valorDeHash}";
-                    i++;
-                }
-            }
+            }            
         }
         return false; // já existe, não incluiu
-    }
-
-    private void redimensioneSe(int novaCap)
-    {
-        Pessoa[] novo = new Pessoa[novaCap];
-
-        for (int i = 0; i < this.dados.Length; i++)
-            novo[i] = this.dados[i];
-
-
-        this.dados   = novo;
-        this.tamanho = this.dados.Length;
     }
 
 
@@ -145,6 +120,19 @@ class HashDuplo
 
         return false;
     }
+
+    public bool Alterar(Pessoa item)
+    {
+        int onde = 0;
+        if (!Existe(item.Chave, out onde))
+            return false;
+
+        this.dados[onde].Nome = item.Nome;
+
+        return true;
+    }
+
+
 
     public bool Remover(string chaveARemover)
     {
@@ -181,9 +169,6 @@ class HashDuplo
             if (this.colisoes[i] != null)
                 lsb.Items.Add(this.colisoes[i]);
         }
-
-        lsb.Items.Add("--------------------------------------------------------");
-
     }
 }
 

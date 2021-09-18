@@ -10,10 +10,6 @@ using System.Windows.Forms;
 
 namespace Hashing
 {        
-    public enum Situacao
-    {
-        incluindo, pesquisando, editando, excluindo
-    }
 
     public enum Sondagem
     {
@@ -23,20 +19,19 @@ namespace Hashing
     public partial class FrmHash : Form
     {
 
-
-        Situacao situacao;
         Sondagem sondagem;
-        HashLinear tabelaLinear;
-        HashDuplo tabelaDuplo;
+        HashLinear     tabelaLinear;
+        HashDuplo      tabelaDuplo;
         HashQuadratica tabelaQuadratica;
 
         public FrmHash()
         {
+            tabelaLinear     = new HashLinear(7);
+            tabelaDuplo      = new HashDuplo(7);
             tabelaQuadratica = new HashQuadratica(50);
-            tabelaLinear = new HashLinear(7);
             InitializeComponent();
+            dgvTabela.ClearSelection();
         }
-
 
 
         private void FrmHashLinear_Load(object sender, EventArgs e)
@@ -55,14 +50,8 @@ namespace Hashing
             rbLinear.PerformClick();
         }
 
-        private void btnSair_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
-
         private void btnNovo_Click(object sender, EventArgs e)
         {
-            /**/ 
             if ((!String.IsNullOrEmpty(txtChave.Text) && !String.IsNullOrWhiteSpace(txtNome.Text)))
              {
                  var umaNovaPessoa = new Pessoa(txtChave.Text, txtNome.Text);
@@ -71,24 +60,28 @@ namespace Hashing
                  {
                      case Sondagem.linear:
                          {
-                            if (!tabelaLinear.Inserir(umaNovaPessoa))
-                                 MessageBox.Show("Chave repetida; inclusão não efetuada!");
+                             if (!tabelaLinear.Inserir(umaNovaPessoa))
+                                MessageBox.Show("Chave repetida; exclusão não efetuada!", "Exclusão", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                              else
                              {
-                                 tabelaLinear.ExibirDados(dgvTabela);
-                                 tabelaLinear.ExibirColisoes(lsbColisoes);
+                                tabelaLinear.ExibirDados(dgvTabela);
+                                tabelaLinear.ExibirColisoes(lsbColisoes);
+                                MessageBox.Show("Inclusão efetuada!", "Inclusão", MessageBoxButtons.OK, MessageBoxIcon.Information);
                              }
+
+
                              break;
                          }
 
                      case Sondagem.duplo:
                          {
                             if (!tabelaDuplo.Inserir(umaNovaPessoa))
-                                MessageBox.Show("Chave repetida; inclusão não efetuada!");
+                                MessageBox.Show("Chave repetida; exclusão não efetuada!", "Exclusão", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                             else
                             {
-                                tabelaLinear.ExibirDados(dgvTabela);
-                                tabelaLinear.ExibirColisoes(lsbColisoes);
+                                tabelaDuplo.ExibirDados(dgvTabela);
+                                tabelaDuplo.ExibirColisoes(lsbColisoes);
+                                MessageBox.Show("Inclusão efetuada!", "Inclusão", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             }
 
                             break;
@@ -97,41 +90,204 @@ namespace Hashing
                      case Sondagem.quadratica:
                          {
                             if (!tabelaQuadratica.Inserir(umaNovaPessoa))
-                                MessageBox.Show("Chave repetida; inclusão não efetuada!");
+                                MessageBox.Show("Chave repetida; exclusão não efetuada!", "Exclusão", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                             else
                             {
                                 tabelaQuadratica.ExibirDados(dgvTabela);
                                 tabelaQuadratica.ExibirColisoes(lsbColisoes);
+                                MessageBox.Show("Inclusão efetuada!", "Inclusão", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             }
                             break;
                          }
                  }               
              }
              else
-                 MessageBox.Show("Preencha os dois campos de dados!");
+                MessageBox.Show("Preencha corretamente os campos de digitação!", "Inclusão", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
-        private void btnExcluir_Click(object sender, EventArgs e)
+        private void btnExcluir_Click_1(object sender, EventArgs e)
         {
+            if (MessageBox.Show("Deseja realmente excluir?", "Exclusão", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            {
+                if (!String.IsNullOrEmpty(txtChave.Text))
+                {
+                    switch (sondagem)
+                    {
+                        case Sondagem.linear:
+                            {
+                                var pessoa = new Pessoa(txtChave.Text, " ");
 
+                                if (tabelaLinear.Remover(pessoa.Chave))
+                                {
+                                    tabelaLinear.ExibirDados(dgvTabela);
+                                    MessageBox.Show("Exclusão efetuada!", "Exclusão", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                }
+                                else
+                                    MessageBox.Show("Chave inexiste; exclusão não efetuada!", "Exclusão", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                                break;
+                            }
+
+                        case Sondagem.duplo:
+                            {
+
+                                var pessoa = new Pessoa(txtChave.Text, " ");
+
+                                if (tabelaLinear.Remover(pessoa.Chave))
+                                {
+                                    tabelaLinear.ExibirDados(dgvTabela);
+                                    MessageBox.Show("Exclusão efetuada!", "Exclusão", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                }
+                                else
+                                    MessageBox.Show("Chave inexiste; exclusão não efetuada!", "Exclusão", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                                break;
+                            }
+
+                        case Sondagem.quadratica:
+                            {
+                               
+                                break;
+                            }
+                    }
+                }
+                else
+                    MessageBox.Show("Preencha a chave de pesquisa!", "Exclusão", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+            }
+        }
+
+        private void btnEditar_Click(object sender, EventArgs e)
+        {
+            if (!String.IsNullOrEmpty(txtChave.Text) && !String.IsNullOrWhiteSpace(txtNome.Text))
+            {
+                switch (sondagem)
+                {
+                    case Sondagem.linear:
+                        {
+                            var pessoa = new Pessoa(txtChave.Text, txtNome.Text);
+
+                            if(tabelaLinear.Alterar(pessoa))
+                            {
+                                tabelaLinear.ExibirDados(dgvTabela);
+                                MessageBox.Show("Edição efetuada!", "Edição", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            }
+                            else
+                                MessageBox.Show("Chave inexiste; Edição não efetuada!", "Edição", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                            break;
+                        }
+
+                    case Sondagem.duplo:
+                        {
+                            var pessoa = new Pessoa(txtChave.Text, txtNome.Text);
+
+                            if (tabelaDuplo.Alterar(pessoa))
+                            {
+                                tabelaDuplo.ExibirDados(dgvTabela);
+                                MessageBox.Show("Edição efetuada!", "Edição", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            }
+                            else
+                                MessageBox.Show("Chave inexiste; Edição não efetuada!", "Edição", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                            break;
+                        }
+
+                    case Sondagem.quadratica:
+                        {
+                            break;
+
+                        }
+                }
+            }
+            else
+                MessageBox.Show("Preencha a chave de pesquisa!", "Exclusão", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+
+        private void btnBuscar_Click(object sender, EventArgs e)
+        {
+            if (!String.IsNullOrEmpty(txtChave.Text))
+            {
+                switch (sondagem)
+                {
+                    case Sondagem.linear:
+                        {
+                            var pessoa = new Pessoa(txtChave.Text, " ");
+                            int onde;
+
+                            if(tabelaLinear.Existe(pessoa.Chave, out onde))
+                            {
+                                txtNome.Text = tabelaLinear[onde].Nome;
+                                MessageBox.Show("Busca efetuada!", "Pesquisa", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            }
+                            else
+                                MessageBox.Show("Chave inexiste; Busca não efetuada!", "Pesquisa", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                            break;
+                        }
+
+                    case Sondagem.duplo:
+                        {
+
+                            var pessoa = new Pessoa(txtChave.Text, " ");
+                            int onde;
+
+                            if (tabelaDuplo.Existe(pessoa.Chave, out onde))
+                            {
+                                txtNome.Text = tabelaDuplo[onde].Nome;
+                                MessageBox.Show("Busca efetuada!", "Pesquisa", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            }
+                            else
+                                MessageBox.Show("Chave inexiste; Busca não efetuada!", "Pesquisa", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                            break;
+                        }
+
+                    case Sondagem.quadratica:
+                        {
+                            break;
+
+                        }
+                }
+            }
+            else
+                MessageBox.Show("Preencha a chave de pesquisa!", "Exclusão", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
         private void rbLinear_Click_1(object sender, EventArgs e)
         {
             if (rbLinear.Checked)
+            {
                 sondagem = Sondagem.linear;
+                tabelaLinear.ExibirDados(dgvTabela);
+                tabelaLinear.ExibirColisoes(lsbColisoes);
+
+            }
         }
 
         private void rbQuadratica_Click_1(object sender, EventArgs e)
         {
             if (rbQuadratica.Checked)
+            {
                 sondagem = Sondagem.quadratica;
+                tabelaQuadratica.ExibirDados(dgvTabela);
+                tabelaQuadratica.ExibirColisoes(lsbColisoes);
+            }
         }
 
         private void rbDuplo_Click_1(object sender, EventArgs e)
         {
             if (rbDuplo.Checked)
+            {
                 sondagem = Sondagem.duplo;
+                tabelaDuplo.ExibirDados(dgvTabela);
+                tabelaDuplo.ExibirColisoes(lsbColisoes);
+            }
+        }
+
+        private void btnSair_Click(object sender, EventArgs e)
+        {
+            Close();
         }
     }
 }

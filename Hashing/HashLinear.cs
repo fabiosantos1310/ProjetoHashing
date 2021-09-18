@@ -3,15 +3,13 @@ using System.Windows.Forms;
 
 class HashLinear
 {
-    private int tamanho = 7; // para gerar mais colisões; o ideal é primo > 100
-    private int qtd = 0;
+   // private int tamanho = 7; // para gerar mais colisões; o ideal é primo > 100
     private string[] colisoes;
     Pessoa[] dados;          // instancio o arraylist dados
 
 
     public HashLinear(int tamanho)
     {
-        this.tamanho = tamanho;
         this.colisoes = new string[tamanho];
         dados = new Pessoa[tamanho];
     }
@@ -32,30 +30,9 @@ class HashLinear
 
     public int Tamanho
     {
-        get => tamanho;
-        set
-        {
-            if (value < 0)
-            {
-                throw new Exception("Tamanho inválido!");
-            }
-
-            tamanho = value;
-        }
+        get => dados.Length;      
     }
-    public int Qtd
-    {
-        get => qtd;
-        set
-        {
-            if (value < 0)
-            {
-                throw new Exception("Tamanho inválido!");
-            }
 
-            qtd = value;
-        }
-    }
 
     public int Hash(string chave)
     {
@@ -63,10 +40,10 @@ class HashLinear
         for (int i = 0; i < chave.Length; i++)
             ret += 37 * ret + (char)chave[i];
 
-        ret = ret % this.dados.Length;
+        ret = ret % this.Tamanho;
 
         if (ret < 0)
-            ret += this.dados.Length;
+            ret += this.Tamanho;
 
         return (int)ret; // retorna o índice do vetor dados onde um registro será armazenado
     }
@@ -75,28 +52,24 @@ class HashLinear
     {
 
         int valorDeHash;
-        int i = 0;
 
-        
+
 
         if (!Existe(item.Chave, out valorDeHash))
         {
-
-            if (this.dados.Length == this.qtd)
-                        this.redimensioneSe(2 * this.dados.Length);
-
-            for (int pos = valorDeHash; pos <= this.dados.Length -1; pos++)
+            this.colisoes = new string[this.Tamanho];
+            int qtdColisao = 0;
+            for (int pos = valorDeHash; pos <= this.Tamanho -1; pos++)
             {
                 if(this.dados[pos] == null)
                 {
                     this.dados[pos] = item;      // não existe, portanto inclui
-                    qtd++;
                     return true;            // informa que conseguiu incluir o novo item na tabela de hash
                 }
                 else
                 { 
-                    colisoes[i] = $"Colisao na {pos}° posição, entre {this.dados[pos].Chave.Trim()} e {item.Chave.Trim()} - Hash{valorDeHash}";
-                    i++;
+                    colisoes[qtdColisao] = $"Colisao na {pos}° posição, entre {this.dados[pos].Chave.Trim()} e {item.Chave.Trim()}";
+                    qtdColisao++;
                 }
 
             }
@@ -106,31 +79,17 @@ class HashLinear
                 if (this.dados[pos] == null)
                 {
                     this.dados[pos] = item;      // não existe, portanto inclui
-                    qtd++;
                     return true;            // informa que conseguiu incluir o novo item na tabela de hash
                 }
                 else
                 {
-                    colisoes[i] = $"Colisao na {pos}° posição, entre {this.dados[pos].Chave.Trim()} e {item.Chave.Trim()} - Hash{valorDeHash}";
-                    i++;
+                    colisoes[qtdColisao] = $"Colisao na {pos}° posição, entre {this.dados[pos].Chave.Trim()} e {item.Chave.Trim()}";
+                    qtdColisao++;
                 }
             }
         }
         return false; // já existe, não incluiu
     }
-
-    private void redimensioneSe(int novaCap)
-    {
-        Pessoa[] novo = new Pessoa[novaCap];
-
-        for (int i = 0; i < this.dados.Length; i++)
-            novo[i] = this.dados[i];
-
-
-        this.dados   = novo;
-        this.tamanho = this.dados.Length;
-    }
-
 
     public bool Existe(string chaveProcurada, out int ondeDados)
     {
@@ -158,6 +117,18 @@ class HashLinear
         return true;
     }
 
+    public bool Alterar(Pessoa item)
+    {
+        int onde = 0;
+        if (!Existe(item.Chave, out onde))
+            return false;
+
+        this.dados[onde].Nome = item.Nome;
+
+        return true;
+    }
+
+
     public void ExibirDados(DataGridView dgv)
     {
         dgv.Rows.Clear();
@@ -181,9 +152,6 @@ class HashLinear
             if (this.colisoes[i] != null)
                 lsb.Items.Add(this.colisoes[i]);
         }
-
-        lsb.Items.Add("--------------------------------------------------------");
-
     }
 }
 
