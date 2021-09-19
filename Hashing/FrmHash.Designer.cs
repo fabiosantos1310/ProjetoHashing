@@ -73,7 +73,6 @@ namespace Hashing
             this.dgvTabela.Name = "dgvTabela";
             this.dgvTabela.RowHeadersWidth = 51;
             this.dgvTabela.RowTemplate.Height = 24;
-            this.dgvTabela.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
             this.dgvTabela.Size = new System.Drawing.Size(310, 264);
             this.dgvTabela.TabIndex = 19;
             // 

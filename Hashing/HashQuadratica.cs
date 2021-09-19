@@ -6,15 +6,12 @@ namespace Hashing
 {
     class HashQuadratica
     {
-        private int tamanho = 7; // para gerar mais colisões; o ideal é primo > 100
-        private int qtd = 0;
         private string[] colisoes;
         Pessoa[] dados;          // instancio o arraylist dados
 
 
         public HashQuadratica(int tamanho)
         {
-            this.tamanho = tamanho;
             this.colisoes = new string[tamanho];
             dados = new Pessoa[tamanho];
         }
@@ -35,29 +32,7 @@ namespace Hashing
 
         public int Tamanho
         {
-            get => tamanho;
-            set
-            {
-                if (value < 0)
-                {
-                    throw new Exception("Tamanho inválido!");
-                }
-
-                tamanho = value;
-            }
-        }
-        public int Qtd
-        {
-            get => qtd;
-            set
-            {
-                if (value < 0)
-                {
-                    throw new Exception("Tamanho inválido!");
-                }
-
-                qtd = value;
-            }
+            get => dados.Length;            
         }
 
         public int Hash(string chave)
@@ -80,47 +55,31 @@ namespace Hashing
             int valorDeHash;
             int i = 0;
 
-
-
             if (!Existe(item.Chave, out valorDeHash))
             {
 
-                if (this.dados.Length == this.qtd)
-                    this.redimensioneSe(2 * this.dados.Length);
+                int pos = 1;
+                this.colisoes = new string[this.dados.Length];
+                int qtdColisao = 0;
 
-                int pos = valorDeHash;
-
-                while (pos <= this.dados.Length - 1)
+                while (valorDeHash <= this.Tamanho - 1)
                 {
-                    if (this.dados[pos] == null)
+                    if (this.dados[valorDeHash] == null)
                     {
-                        this.dados[pos] = item;      // não existe, portanto inclui
-                        qtd++;
+                        this.dados[valorDeHash] = item;      // não existe, portanto inclui
                         return true;            // informa que conseguiu incluir o novo item na tabela de hash
                     }
                     else
                     {
-                        colisoes[i] = $"Colisao na {pos}° posição, entre {this.dados[pos].Nome.Trim()} e {item.Nome.Trim()} - Hash{valorDeHash}";
-                        i++;
+                        colisoes[qtdColisao] = $"Colisao na {valorDeHash}° posição, entre {this.dados[valorDeHash].Nome.Trim()} e {item.Nome.Trim()}";
+                        qtdColisao++;                        
+                        valorDeHash = valorDeHash + (pos * pos);
+                        pos++;
                     }
-                    pos++;
-                    pos = valorDeHash + (pos * pos);
+                   
                 }
-
             }
             return false; // já existe, não incluiu
-        }
-
-        private void redimensioneSe(int novaCap)
-        {
-            Pessoa[] novo = new Pessoa[novaCap];
-
-            for (int i = 0; i < this.dados.Length; i++)
-                novo[i] = this.dados[i];
-
-
-            this.dados = novo;
-            this.tamanho = this.dados.Length;
         }
 
 
@@ -128,15 +87,31 @@ namespace Hashing
         {
             ondeDados = Hash(chaveProcurada);  // posição do vetor onde deveria estar a pessoa com essa chave
 
-            foreach (Pessoa pessoa in this.dados)
+            int aux = 1;
+            for (int pos = ondeDados; pos <= this.Tamanho - 1; pos+=(aux*aux))
             {
-                if (pessoa != null)
-                    if (pessoa.Chave.CompareTo(chaveProcurada) == 0)
-                        return true;
+                if (this.dados[pos] != null)
+                    if (this.dados[pos].Chave.CompareTo(chaveProcurada) == 0)
+                    {
+                        ondeDados = pos;        // não existe, portanto inclui
+                        return true;            // informa que conseguiu incluir o novo item na tabela de hash
+                    }
             }
 
             return false;
         }
+
+        public bool Alterar(Pessoa item)
+        {
+            int onde = 0;
+            if (!Existe(item.Chave, out onde))
+                return false;
+
+            this.dados[onde].Nome = item.Nome;
+
+            return true;
+        }
+
 
         public bool Remover(string chaveARemover)
         {
@@ -160,8 +135,8 @@ namespace Hashing
                 if (dados[numeroLinha] != null)
                 {
                     dgv[0, numeroLinha].Value = numeroLinha;
-                    dgv[1, numeroLinha].Value = dados[numeroLinha].Chave;
-                    dgv[2, numeroLinha].Value = dados[numeroLinha].Nome;
+                    dgv[1, numeroLinha].Value = dados[numeroLinha].Chave.Trim();
+                    dgv[2, numeroLinha].Value = dados[numeroLinha].Nome.Trim();
                 }
             }
         }

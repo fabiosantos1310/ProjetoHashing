@@ -30,7 +30,6 @@ namespace Hashing
             tabelaDuplo = new HashDuplo(7);
             tabelaQuadratica = new HashQuadratica(50);
             InitializeComponent();
-            dgvTabela.ClearSelection();
         }
 
 
@@ -77,7 +76,6 @@ namespace Hashing
                                 MessageBox.Show("Inclusão efetuada!", "Inclusão", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             }
 
-
                             break;
                         }
 
@@ -105,6 +103,7 @@ namespace Hashing
                                 tabelaQuadratica.ExibirColisoes(lsbColisoes);
                                 MessageBox.Show("Inclusão efetuada!", "Inclusão", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             }
+
                             break;
                         }
                 }
@@ -152,6 +151,17 @@ namespace Hashing
 
                     case Sondagem.quadratica:
                         {
+
+                            var pessoa = new Pessoa(txtChave.Text, txtNome.Text);
+
+                            if (tabelaQuadratica.Alterar(pessoa))
+                            {
+                                tabelaQuadratica.ExibirDados(dgvTabela);
+                                MessageBox.Show("Edição efetuada!", "Edição", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            }
+                            else
+                                MessageBox.Show("Chave inexiste; Edição não efetuada!", "Edição", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
                             break;
 
                         }
@@ -172,7 +182,7 @@ namespace Hashing
                             var pessoa = new Pessoa(txtChave.Text, " ");
                             int onde;
 
-                            if (tabelaLinear.Buscar(pessoa.Chave, out onde))
+                            if (tabelaLinear.Existe(pessoa.Chave, out onde))
                             {
                                 txtNome.Text = tabelaLinear[onde].Nome;
                                 MessageBox.Show("Busca efetuada!", "Pesquisa", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -189,7 +199,7 @@ namespace Hashing
                             var pessoa = new Pessoa(txtChave.Text, " ");
                             int onde;
 
-                            if (tabelaDuplo.Buscar(pessoa.Chave, out onde))
+                            if (tabelaDuplo.Existe(pessoa.Chave, out onde))
                             {
                                 txtNome.Text = tabelaDuplo[onde].Nome;
                                 MessageBox.Show("Busca efetuada!", "Pesquisa", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -202,7 +212,16 @@ namespace Hashing
 
                     case Sondagem.quadratica:
                         {
+                            var pessoa = new Pessoa(txtChave.Text, " ");
+                            int onde;
 
+                            if (tabelaQuadratica.Existe(pessoa.Chave, out onde))
+                            {
+                                txtNome.Text = tabelaQuadratica[onde].Nome;
+                                MessageBox.Show("Busca efetuada!", "Pesquisa", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            }
+                            else
+                                MessageBox.Show("Chave inexiste; Busca não efetuada!", "Pesquisa", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
                             break;
 
@@ -211,6 +230,67 @@ namespace Hashing
             }
             else
                 MessageBox.Show("Preencha a chave de pesquisa!", "Exclusão", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+
+        private void btnExcluir_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Deseja realmente excluir?", "Exclusão", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            {
+                if (!String.IsNullOrEmpty(txtChave.Text))
+                {
+                    Pessoa pessoa;
+                    switch (sondagem)
+                    {
+                        case Sondagem.linear:
+                            {
+                                pessoa = new Pessoa(txtChave.Text, " ");
+
+                                if (tabelaLinear.Remover(pessoa.Chave))
+                                {
+                                    tabelaLinear.ExibirDados(dgvTabela);
+                                    MessageBox.Show("Exclusão efetuada!", "Exclusão", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                }
+                                else
+                                    MessageBox.Show("Chave inexiste; exclusão não efetuada!", "Exclusão", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                                break;
+                            }
+
+                        case Sondagem.duplo:
+                            {
+
+                                pessoa = new Pessoa(txtChave.Text, " ");
+
+                                if (tabelaDuplo.Remover(pessoa.Chave))
+                                {
+                                    tabelaDuplo.ExibirDados(dgvTabela);
+                                    MessageBox.Show("Exclusão efetuada!", "Exclusão", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                }
+                                else
+                                    MessageBox.Show("Chave inexiste; exclusão não efetuada!", "Exclusão", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                                break;
+                            }
+
+                        case Sondagem.quadratica:
+                            {
+                                pessoa = new Pessoa(txtChave.Text, " ");
+
+                                if (tabelaQuadratica.Remover(pessoa.Chave))
+                                {
+                                    tabelaQuadratica.ExibirDados(dgvTabela);
+                                    MessageBox.Show("Exclusão efetuada!", "Exclusão", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                }
+                                else
+                                    MessageBox.Show("Chave inexiste; exclusão não efetuada!", "Exclusão", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                                break;
+                            }
+                    }
+                }
+                else
+                    MessageBox.Show("Preencha a chave de pesquisa!", "Exclusão", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
 
         private void rbLinear_Click_1(object sender, EventArgs e)
@@ -256,57 +336,6 @@ namespace Hashing
         {
             dgvTabela.Rows.Clear();
             lsbColisoes.Items.Clear();
-        }
-
-        private void btnExcluir_Click(object sender, EventArgs e)
-        {
-            if (MessageBox.Show("Deseja realmente excluir?", "Exclusão", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
-            {
-                if (!String.IsNullOrEmpty(txtChave.Text))
-                {
-                    switch (sondagem)
-                    {
-                        case Sondagem.linear:
-                            {
-                                var pessoa = new Pessoa(txtChave.Text, " ");
-
-                                if (tabelaLinear.Remover(pessoa.Chave))
-                                {
-                                    tabelaLinear.ExibirDados(dgvTabela);
-                                    MessageBox.Show("Exclusão efetuada!", "Exclusão", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                }
-                                else
-                                    MessageBox.Show("Chave inexiste; exclusão não efetuada!", "Exclusão", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-                                break;
-                            }
-
-                        case Sondagem.duplo:
-                            {
-
-                                var pessoa = new Pessoa(txtChave.Text, " ");
-
-                                if (tabelaDuplo.Remover(pessoa.Chave))
-                                {
-                                    tabelaDuplo.ExibirDados(dgvTabela);
-                                    MessageBox.Show("Exclusão efetuada!", "Exclusão", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                }
-                                else
-                                    MessageBox.Show("Chave inexiste; exclusão não efetuada!", "Exclusão", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-                                break;
-                            }
-
-                        case Sondagem.quadratica:
-                            {
-
-                                break;
-                            }
-                    }
-                }
-                else
-                    MessageBox.Show("Preencha a chave de pesquisa!", "Exclusão", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
         }
 
         private void btnListar_Click(object sender, EventArgs e)
@@ -361,6 +390,8 @@ namespace Hashing
                     }
             }
         }
+
+
     }
 }
 

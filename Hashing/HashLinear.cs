@@ -4,10 +4,8 @@ using System.Windows.Forms;
 
 class HashLinear
 {
-    // private int tamanho = 7; // para gerar mais colisões; o ideal é primo > 100
     private string[] colisoes;
-    Pessoa[] dados;          // instancio o arraylist dados
-
+    Pessoa[] dados;          
 
     public HashLinear(int tamanho)
     {
@@ -26,14 +24,12 @@ class HashLinear
 
             return this.dados[posicao];
         }
-
     }
 
     public int Tamanho
     {
         get => dados.Length;
     }
-
 
     public int Hash(string chave)
     {
@@ -95,45 +91,34 @@ class HashLinear
     {
         ondeDados = Hash(chaveProcurada);  // posição do vetor onde deveria estar a pessoa com essa chave
 
-        foreach (Pessoa pessoa in this.dados)
-        {
-            if (pessoa != null)
-                if (pessoa.Chave.CompareTo(chaveProcurada) == 0)
-                    return true;
-        }
-
-        return false;
-    }
-
-    public bool Buscar(string chaveProcurada, out int ondeDados)
-    {
-        ondeDados = Hash(chaveProcurada);  // posição do vetor onde deveria estar a pessoa com essa chave
-
         for (int pos = ondeDados; pos <= this.Tamanho - 1; pos++)
         {
-            if (this.dados[pos].Chave.CompareTo(chaveProcurada) == 0)
-            {
-                ondeDados = pos;        // não existe, portanto inclui
-                return true;            // informa que conseguiu incluir o novo item na tabela de hash
-            }
+            if(this.dados[pos] != null)
+                if (this.dados[pos].Chave.CompareTo(chaveProcurada) == 0)
+                {
+                    ondeDados = pos;        // não existe, portanto inclui
+                    return true;            // informa que conseguiu incluir o novo item na tabela de hash
+                }
         }
 
         for (int pos = 0; pos < ondeDados; pos++)
         {
-            if (this.dados[pos].Chave.CompareTo(chaveProcurada) == 0)
-            {
-                ondeDados = pos;        // não existe, portanto inclui
-                return true;            // informa que conseguiu incluir o novo item na tabela de hash
-            }
+            if (this.dados[pos] != null)
+                if (this.dados[pos].Chave.CompareTo(chaveProcurada) == 0)
+                {
+                    ondeDados = pos;        // não existe, portanto inclui
+                    return true;            // informa que conseguiu incluir o novo item na tabela de hash
+                }
         }
 
         return false;
     }
 
+
     public bool Remover(string chaveARemover)
     {
         int onde = 0;
-        if (!Buscar(chaveARemover, out onde))
+        if (!Existe(chaveARemover, out onde))
             return false;
 
 
@@ -145,7 +130,7 @@ class HashLinear
     public bool Alterar(Pessoa item)
     {
         int onde = 0;
-        if (!Buscar(item.Chave, out onde))
+        if (!Existe(item.Chave, out onde))
             return false;
 
         this.dados[onde].Nome = item.Nome;
@@ -164,8 +149,8 @@ class HashLinear
             if (dados[numeroLinha] != null)
             {
                 dgv[0, numeroLinha].Value = numeroLinha;
-                dgv[1, numeroLinha].Value = dados[numeroLinha].Chave;
-                dgv[2, numeroLinha].Value = dados[numeroLinha].Nome;
+                dgv[1, numeroLinha].Value = dados[numeroLinha].Chave.Trim();
+                dgv[2, numeroLinha].Value = dados[numeroLinha].Nome.Trim();
             }
         }
     }

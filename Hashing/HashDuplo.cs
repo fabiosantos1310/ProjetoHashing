@@ -4,7 +4,6 @@ using System.Windows.Forms;
 
 class HashDuplo
 {
-    private int qtd = 0;
     private string[] colisoes;
     private Pessoa[] dados;          // instancio o arraylist dados
 
@@ -26,7 +25,6 @@ class HashDuplo
 
             return this.dados[posicao];
         }
-
     }
 
     public int Tamanho
@@ -41,53 +39,48 @@ class HashDuplo
         for (int i = 0; i < chave.Length; i++)
             ret += 37 * ret + (char)chave[i];
 
-        ret = ret % this.dados.Length;
+        ret = ret % this.Tamanho;
 
         if (ret < 0)
-            ret += this.dados.Length;
+            ret += this.Tamanho;
         else if (ret == 0)
-            ret += this.dados.Length - 1;
+            ret += this.Tamanho - 1;
 
         return (int)ret; // retorna o índice do vetor dados onde um registro será armazenado
     }
 
+    // Segundo Hash chamado ao dar erro na inclusão
+    public int Hash(int chave) 
+    {        
+      return (3 - (chave % 3)); // retorna o índice do vetor dados onde um registro será armazenado
+    }
 
     public bool Existe(string chaveProcurada, out int ondeDados)
     {
         ondeDados = Hash(chaveProcurada);  // posição do vetor onde deveria estar a pessoa com essa chave
 
-        foreach (Pessoa pessoa in this.dados)
+        int aux = 0;
+        for (int pos = ondeDados; pos <= this.Tamanho - 1 && aux < this.Tamanho; pos = (pos + ++aux * Hash(pos)) % this.Tamanho)
         {
-            if (pessoa != null)
-                if (pessoa.Chave.CompareTo(chaveProcurada) == 0)
-                    return true;
-        }
-
-        return false;
-    }
-
-
-    public bool Buscar(string chaveProcurada, out int ondeDados)
-    {
-        ondeDados = Hash(chaveProcurada);  // posição do vetor onde deveria estar a pessoa com essa chave
-
-        for (int pos = ondeDados; pos <= this.Tamanho - 1; pos = Hash(pos.ToString()))
-        {
-            if (this.dados[pos].Chave.CompareTo(chaveProcurada) == 0)
+            if(this.dados[pos] != null)
             {
-                ondeDados = pos;        // não existe, portanto inclui
-                return true;            // informa que conseguiu incluir o novo item na tabela de hash
-            }
+                if (this.dados[pos].Chave.CompareTo(chaveProcurada) == 0)
+                {
+                    ondeDados = pos;        // não existe, portanto inclui
+                    return true;            // informa que conseguiu incluir o novo item na tabela de hash
+                }
+            }                
+         
         }
 
         return false;
     }
+
 
     public bool Inserir(Pessoa item)
     {
 
         int valorDeHash;
-
         if (!Existe(item.Chave, out valorDeHash))
         {
 
@@ -103,10 +96,8 @@ class HashDuplo
                 }
                 else
                 {
-                    colisoes[qtdColisao] = $"Colisao na {valorDeHash}° posição, entre {this.dados[valorDeHash].Nome.Trim()} e {item.Nome.Trim()} - Hash{valorDeHash} - {Hash(valorDeHash.ToString())}";
-                    valorDeHash = Hash(valorDeHash.ToString());
-                    //valorDeHash *= 2;
-                    qtdColisao++;
+                    colisoes[qtdColisao] = $"Colisao na {valorDeHash}° posição, entre {this.dados[valorDeHash].Nome.Trim()} e {item.Nome.Trim()}";                    
+                    valorDeHash = (valorDeHash + ++qtdColisao * Hash(valorDeHash)) % this.Tamanho;
                 }
             }
         }
@@ -116,7 +107,7 @@ class HashDuplo
     public bool Alterar(Pessoa item)
     {
         int onde = 0;
-        if (!Buscar(item.Chave, out onde))
+        if (!Existe(item.Chave, out onde))
             return false;
 
         this.dados[onde].Nome = item.Nome;
@@ -128,7 +119,7 @@ class HashDuplo
     public bool Remover(string chaveARemover)
     {
         int onde = 0;
-        if (!Buscar(chaveARemover, out onde))
+        if (!Existe(chaveARemover, out onde))
             return false;
 
 
@@ -147,8 +138,8 @@ class HashDuplo
             if (dados[numeroLinha] != null)
             {
                 dgv[0, numeroLinha].Value = numeroLinha;
-                dgv[1, numeroLinha].Value = dados[numeroLinha].Chave;
-                dgv[2, numeroLinha].Value = dados[numeroLinha].Nome;
+                dgv[1, numeroLinha].Value = dados[numeroLinha].Chave.Trim();
+                dgv[2, numeroLinha].Value = dados[numeroLinha].Nome.Trim();
             }
         }
     }
