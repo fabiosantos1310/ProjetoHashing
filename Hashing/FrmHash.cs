@@ -28,7 +28,7 @@ namespace Hashing
         {
             tabelaLinear = new HashLinear(7);
             tabelaDuplo = new HashDuplo(7);
-            tabelaQuadratica = new HashQuadratica(50);
+            tabelaQuadratica = new HashQuadratica(7);
             InitializeComponent();
         }
 

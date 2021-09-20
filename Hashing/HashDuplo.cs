@@ -5,11 +5,13 @@ using System.Windows.Forms;
 class HashDuplo
 {
     private string[] colisoes;
-    private Pessoa[] dados;          // instancio o arraylist dados
+    private Pessoa[] dados;
+    private int qtd;
 
 
     public HashDuplo(int tamanho)
     {
+        qtd = 0;
         this.colisoes = new string[tamanho];
         dados = new Pessoa[tamanho];
     }
@@ -31,7 +33,20 @@ class HashDuplo
     {
         get => this.dados.Length;
     }
+    public int Qtd
+    {
+        get => qtd;
+        set
+        {
+            if (value < 0 || value > this.Tamanho)
+            {
+                throw new IndexOutOfRangeException("Quantidade inválida!");
+            }
 
+            qtd = value;
+
+        }
+    }
 
     public int Hash(string chave)
     {
@@ -83,6 +98,8 @@ class HashDuplo
         int valorDeHash;
         if (!Existe(item.Chave, out valorDeHash))
         {
+            if (this.Tamanho == this.Qtd)
+                RedimensioneSe(this.Tamanho * 2);
 
             this.colisoes = new string[this.dados.Length];
             int qtdColisao = 0;
@@ -92,6 +109,7 @@ class HashDuplo
                 if (this.dados[valorDeHash] == null)
                 {
                     this.dados[valorDeHash] = item;
+                    Qtd++;
                     return true;
                 }
                 else
@@ -124,8 +142,19 @@ class HashDuplo
 
 
         this.dados[onde] = null;
+        Qtd--;
 
         return true;
+    }
+
+    private void RedimensioneSe(int novaCap)
+    {
+        Pessoa[] novo = new Pessoa[novaCap];
+
+        for (int i = 0; i < this.Tamanho; i++)
+            novo[i] = this.dados[i];
+
+        this.dados = novo;
     }
 
     public void ExibirDados(DataGridView dgv)

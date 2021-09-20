@@ -5,10 +5,12 @@ using System.Windows.Forms;
 class HashLinear
 {
     private string[] colisoes;
+    private int qtd;
     Pessoa[] dados;          
 
     public HashLinear(int tamanho)
     {
+        qtd = 0;
         this.colisoes = new string[tamanho];
         dados = new Pessoa[tamanho];
     }
@@ -29,6 +31,20 @@ class HashLinear
     public int Tamanho
     {
         get => dados.Length;
+    }
+
+    public int Qtd
+    {
+        get => qtd;
+        set
+        {
+            if(value < 0 || value > this.Tamanho)
+            {
+                throw new IndexOutOfRangeException("Quantidade inválida!");
+            }
+
+            qtd = value;
+        }
     }
 
     public int Hash(string chave)
@@ -52,6 +68,10 @@ class HashLinear
 
         if (!Existe(item.Chave, out valorDeHash))
         {
+
+            if (this.Tamanho == this.Qtd)
+                RedimensioneSe(this.Tamanho * 2);
+
             this.colisoes = new string[this.Tamanho];
             int qtdColisao = 0;
 
@@ -60,6 +80,7 @@ class HashLinear
                 if (this.dados[pos] == null)
                 {
                     this.dados[pos] = item;      // não existe, portanto inclui
+                    Qtd++;
                     return true;            // informa que conseguiu incluir o novo item na tabela de hash
                 }
                 else
@@ -75,6 +96,7 @@ class HashLinear
                 if (this.dados[pos] == null)
                 {
                     this.dados[pos] = item;      // não existe, portanto inclui
+                    Qtd++;
                     return true;            // informa que conseguiu incluir o novo item na tabela de hash
                 }
                 else
@@ -110,7 +132,6 @@ class HashLinear
                     return true;            // informa que conseguiu incluir o novo item na tabela de hash
                 }
         }
-
         return false;
     }
 
@@ -123,6 +144,7 @@ class HashLinear
 
 
         this.dados[onde] = null;
+        Qtd--;
 
         return true;
     }
@@ -136,6 +158,16 @@ class HashLinear
         this.dados[onde].Nome = item.Nome;
 
         return true;
+    }
+
+    private void RedimensioneSe(int novaCap)
+    {
+        Pessoa[] novo = new Pessoa[novaCap];
+
+        for (int i = 0; i < this.Tamanho; i++)
+            novo[i] = this.dados[i];
+
+        this.dados = novo;
     }
 
 

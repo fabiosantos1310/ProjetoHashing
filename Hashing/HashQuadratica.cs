@@ -7,11 +7,13 @@ namespace Hashing
     class HashQuadratica
     {
         private string[] colisoes;
-        Pessoa[] dados;          // instancio o arraylist dados
+        private Pessoa[] dados;          // instancio o arraylist dados
+        private int qtd;
 
 
         public HashQuadratica(int tamanho)
         {
+            qtd = 0;
             this.colisoes = new string[tamanho];
             dados = new Pessoa[tamanho];
         }
@@ -27,7 +29,21 @@ namespace Hashing
 
                 return this.dados[posicao];
             }
+        }
 
+        public int Qtd
+        {
+            get => qtd;
+            set
+            {
+                if (value < 0 || value > this.Tamanho)
+                {
+                    throw new IndexOutOfRangeException("Quantidade inválida!");
+                }
+
+                qtd = value;
+
+            }
         }
 
         public int Tamanho
@@ -58,6 +74,9 @@ namespace Hashing
             if (!Existe(item.Chave, out valorDeHash))
             {
 
+                if (this.Tamanho == this.Qtd)
+                    RedimensioneSe(this.Tamanho * 2);
+
                 int pos = 1;
                 this.colisoes = new string[this.dados.Length];
                 int qtdColisao = 0;
@@ -67,6 +86,7 @@ namespace Hashing
                     if (this.dados[valorDeHash] == null)
                     {
                         this.dados[valorDeHash] = item;      // não existe, portanto inclui
+                        Qtd++;
                         return true;            // informa que conseguiu incluir o novo item na tabela de hash
                     }
                     else
@@ -75,8 +95,9 @@ namespace Hashing
                         qtdColisao++;                        
                         valorDeHash = valorDeHash + (pos * pos);
                         pos++;
-                    }
-                   
+
+
+                    }                   
                 }
             }
             return false; // já existe, não incluiu
@@ -121,9 +142,21 @@ namespace Hashing
 
 
             this.dados[onde] = null;
+            Qtd--;
 
             return true;
         }
+
+        private void RedimensioneSe(int novaCap)
+        {
+            Pessoa[] novo = new Pessoa[novaCap];
+
+            for (int i = 0; i < this.Tamanho; i++)
+                novo[i] = this.dados[i];
+
+            this.dados = novo;
+        }
+
 
         public void ExibirDados(DataGridView dgv)
         {
