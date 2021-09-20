@@ -77,7 +77,7 @@ namespace Hashing
                 if (this.Tamanho == this.Qtd)
                     RedimensioneSe(this.Tamanho * 2);
 
-                int pos = 1;
+
                 this.colisoes = new string[this.dados.Length];
                 int qtdColisao = 0;
 
@@ -92,7 +92,7 @@ namespace Hashing
                     else
                     {
                         colisoes[qtdColisao++] = $"Colisao na {valorDeHash}° posição, entre {this.dados[valorDeHash].Nome.Trim()} e {item.Nome.Trim()}";
-                        valorDeHash += (int)Math.Pow(pos++,2);
+                        valorDeHash += (int)Math.Pow(qtdColisao,2);
 
                         if (valorDeHash > this.Tamanho)
                             RedimensioneSe(this.Tamanho * 2);

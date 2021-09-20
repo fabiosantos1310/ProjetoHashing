@@ -18,3 +18,13 @@ C:\Users\aluno\Music\Repositorios_Git\ProjetoHashing\Hashing\bin\Debug\Hashing.e
 C:\Users\aluno\Music\Repositorios_Git\ProjetoHashing\Hashing\bin\Debug\Hashing.pdb
 C:\Users\aluno\Music\Repositorios_Git\ProjetoHashing\Hashing\obj\Debug\Hashing.Properties.Resources.resources
 C:\Users\aluno\Music\Repositorios_Git\ProjetoHashing\Hashing\obj\Debug\apHashing.csproj.CoreCompileInputs.cache
+C:\Users\Fabio\Documents\GitHub\ProjetoHashing\Hashing\bin\Debug\Hashing.exe.config
+C:\Users\Fabio\Documents\GitHub\ProjetoHashing\Hashing\bin\Debug\Hashing.exe
+C:\Users\Fabio\Documents\GitHub\ProjetoHashing\Hashing\bin\Debug\Hashing.pdb
+C:\Users\Fabio\Documents\GitHub\ProjetoHashing\Hashing\obj\Debug\apHashing.csprojAssemblyReference.cache
+C:\Users\Fabio\Documents\GitHub\ProjetoHashing\Hashing\obj\Debug\Hashing.FrmHash.resources
+C:\Users\Fabio\Documents\GitHub\ProjetoHashing\Hashing\obj\Debug\Hashing.Properties.Resources.resources
+C:\Users\Fabio\Documents\GitHub\ProjetoHashing\Hashing\obj\Debug\apHashing.csproj.GenerateResource.cache
+C:\Users\Fabio\Documents\GitHub\ProjetoHashing\Hashing\obj\Debug\apHashing.csproj.CoreCompileInputs.cache
+C:\Users\Fabio\Documents\GitHub\ProjetoHashing\Hashing\obj\Debug\Hashing.exe
+C:\Users\Fabio\Documents\GitHub\ProjetoHashing\Hashing\obj\Debug\Hashing.pdb
