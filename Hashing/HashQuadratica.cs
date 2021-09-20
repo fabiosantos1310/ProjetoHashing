@@ -102,6 +102,43 @@ namespace Hashing
             return false; // já existe, não incluiu
         }
 
+        public bool Inserir(Pessoa item, Pessoa[] dados)
+        {
+
+            int valorDeHash;
+            int i = 0;
+
+            if (!Existe(item.Chave, out valorDeHash))
+            {
+
+                if (this.Tamanho == this.Qtd)
+                    RedimensioneSe(this.Tamanho * 2);
+
+                int pos = 1;
+                this.colisoes = new string[this.dados.Length];
+                int qtdColisao = 0;
+
+                while (valorDeHash <= this.Tamanho - 1)
+                {
+                    if (dados[valorDeHash] == null)
+                    {
+                        dados[valorDeHash] = item;      // não existe, portanto inclui
+                        Qtd++;
+                        return true;            // informa que conseguiu incluir o novo item na tabela de hash
+                    }
+                    else
+                    {
+                        colisoes[qtdColisao++] = $"Colisao na {valorDeHash}° posição, entre {dados[valorDeHash].Nome.Trim()} e {item.Nome.Trim()}";
+                        valorDeHash += (int)Math.Pow(pos++, 2);
+
+                        if (valorDeHash > this.Tamanho)
+                            RedimensioneSe(this.Tamanho * 2);
+                    }
+                }
+            }
+            return false; // já existe, não incluiu
+        }
+
 
         public bool Existe(string chaveProcurada, out int ondeDados)
         {
@@ -148,12 +185,15 @@ namespace Hashing
 
         private void RedimensioneSe(int novaCap)
         {
-            Pessoa[] novo = new Pessoa[novaCap];
+            Pessoa[] novo = this.dados;
+            this.dados = new Pessoa[novaCap];
+            this.qtd = 0;
 
-            for (int i = 0; i < this.Tamanho; i++)
-                novo[i] = this.dados[i];
-
-            this.dados = novo;
+            for (int i = 0; i < novo.Length; i++)
+            {
+                if (novo[i] != null)
+                    Inserir(novo[i]);
+            }
         }
 
 

@@ -57,9 +57,9 @@ class HashDuplo
         ret = ret % this.Tamanho;
 
         if (ret < 0)
-            ret += this.Tamanho;
-        else if (ret == 0)
-            ret += this.Tamanho - 1;
+           ret += this.Tamanho;
+        //else if (ret == 0)
+        //    ret += this.Tamanho - 1;
 
         return (int)ret; // retorna o índice do vetor dados onde um registro será armazenado
     }
@@ -74,8 +74,8 @@ class HashDuplo
     {
         ondeDados = Hash(chaveProcurada);  // posição do vetor onde deveria estar a pessoa com essa chave
 
-        int aux = 0;
-        for (int pos = ondeDados; pos <= this.Tamanho - 1 && aux < this.Tamanho; pos = (pos + ++aux * Hash(pos)) % this.Tamanho)
+        int aux = 1;
+        for (int pos = ondeDados; aux < this.Tamanho; pos = (ondeDados + aux++ * Hash(ondeDados)) % this.Tamanho)
         {
             if(this.dados[pos] != null)
             {
@@ -94,7 +94,7 @@ class HashDuplo
 
     public bool Inserir(Pessoa item)
     {
-
+               
         int valorDeHash;
         if (!Existe(item.Chave, out valorDeHash))
         {
@@ -104,24 +104,34 @@ class HashDuplo
             this.colisoes = new string[this.dados.Length];
             int qtdColisao = 0;
 
-            while (qtdColisao < this.Tamanho)
+           
+            if (this.dados[valorDeHash] == null)
             {
-                if (this.dados[valorDeHash] == null)
+                this.dados[valorDeHash] = item;
+                Qtd++;
+                return true;
+            }
+            else
+            {
+                //valorDeHash = (valorDeHash + ++qtdColisao * Hash(valorDeHash)) % this.Tamanho;
+                int aux = valorDeHash;
+                for (;;)
                 {
-                    this.dados[valorDeHash] = item;
-                    Qtd++;
-                    return true;
-                }
-                else
-                {
-                    colisoes[qtdColisao++] = $"Colisao na {valorDeHash}° posição, entre {this.dados[valorDeHash].Nome.Trim()} e {item.Nome.Trim()}";
-                    //valorDeHash = (valorDeHash + ++qtdColisao * Hash(valorDeHash)) % this.Tamanho;
+                    if (this.dados[aux] == null)
+                    {
+                        this.dados[aux] = item;
+                        Qtd++;
+                        return true;
+                    }
+                    else
+                    {
+                        colisoes[qtdColisao++] = $"Colisao na {aux}° posição, entre {this.dados[aux].Nome.Trim()} e {item.Nome.Trim()}";
+                        aux = (valorDeHash + qtdColisao * Hash(valorDeHash)) % this.Tamanho;
+                    }
 
-                    valorDeHash += Hash(valorDeHash);
-                    if (valorDeHash > this.Tamanho)
-                        RedimensioneSe(this.Tamanho * 2);
                 }
             }
+            
         }
         return false; // já existe, não incluiu
     }
@@ -153,12 +163,15 @@ class HashDuplo
 
     private void RedimensioneSe(int novaCap)
     {
-        Pessoa[] novo = new Pessoa[novaCap];
+        Pessoa[] novo = this.dados;
+        this.dados = new Pessoa[novaCap];
+        this.qtd = 0;
 
-        for (int i = 0; i < this.Tamanho; i++)
-            novo[i] = this.dados[i];
-
-        this.dados = novo;
+        for (int i = 0; i < novo.Length; i++)
+        {
+            if (novo[i] != null)
+                Inserir(novo[i]);
+        }
     }
 
     public void ExibirDados(DataGridView dgv)

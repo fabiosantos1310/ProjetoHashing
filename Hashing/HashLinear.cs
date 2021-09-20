@@ -162,12 +162,15 @@ class HashLinear
 
     private void RedimensioneSe(int novaCap)
     {
-        Pessoa[] novo = new Pessoa[novaCap];
+        Pessoa[] novo = this.dados;
+        this.dados = new Pessoa[novaCap];
+        this.qtd = 0;
 
-        for (int i = 0; i < this.Tamanho; i++)
-            novo[i] = this.dados[i];
-
-        this.dados = novo;
+        for (int i = 0; i < novo.Length; i++)
+        {
+            if (novo[i] != null)
+                Inserir(novo[i]);
+        }
     }
 
 
