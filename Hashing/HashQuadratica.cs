@@ -91,12 +91,11 @@ namespace Hashing
                     }
                     else
                     {
-                        colisoes[qtdColisao] = $"Colisao na {valorDeHash}° posição, entre {this.dados[valorDeHash].Nome.Trim()} e {item.Nome.Trim()}";
-                        qtdColisao++;                        
-                        valorDeHash = valorDeHash + (pos * pos);
-                        pos++;
+                        colisoes[qtdColisao++] = $"Colisao na {valorDeHash}° posição, entre {this.dados[valorDeHash].Nome.Trim()} e {item.Nome.Trim()}";
+                        valorDeHash += (int)Math.Pow(pos++,2);
 
-
+                        if (valorDeHash > this.Tamanho)
+                            RedimensioneSe(this.Tamanho * 2);
                     }                   
                 }
             }

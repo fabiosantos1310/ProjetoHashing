@@ -114,8 +114,12 @@ class HashDuplo
                 }
                 else
                 {
-                    colisoes[qtdColisao] = $"Colisao na {valorDeHash}° posição, entre {this.dados[valorDeHash].Nome.Trim()} e {item.Nome.Trim()}";                    
-                    valorDeHash = (valorDeHash + ++qtdColisao * Hash(valorDeHash)) % this.Tamanho;
+                    colisoes[qtdColisao++] = $"Colisao na {valorDeHash}° posição, entre {this.dados[valorDeHash].Nome.Trim()} e {item.Nome.Trim()}";
+                    //valorDeHash = (valorDeHash + ++qtdColisao * Hash(valorDeHash)) % this.Tamanho;
+
+                    valorDeHash += Hash(valorDeHash);
+                    if (valorDeHash > this.Tamanho)
+                        RedimensioneSe(this.Tamanho * 2);
                 }
             }
         }
